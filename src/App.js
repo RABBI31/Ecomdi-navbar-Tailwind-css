@@ -1,24 +1,44 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Navbar from './components/Navbar';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import Dropdown from './components/Dropdown';
+import Profile from './pages/Profile';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
 
 function App() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    const hideMenu = () => {
+      if (window.innerWidth > 768 && isOpen) {
+        setIsOpen(false);
+        console.log('i resized');
+      }
+    };
+
+    window.addEventListener('resize', hideMenu);
+
+    return () => {
+      window.removeEventListener('resize', hideMenu);
+    };
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Navbar toggle={toggle} />
+      <Dropdown isOpen={isOpen} toggle={toggle} />
+      <Switch>
+        <Route path='/profile'  component={Profile} />
+        <Route path='/cart' component={Cart} />
+        <Route path='/login' component={Login} />
+      </Switch>
+      
+    </BrowserRouter>
   );
 }
 
